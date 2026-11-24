@@ -1,0 +1,60 @@
+{
+  "verifiedAt": "2026-10-29T07:57:49.536Z",
+  "postId": "d745090c-c8cf-5359-a88a-c5a5b4f8eca2",
+  "build": "/assets/index-Chq2I5yB.js",
+  "test": "lost-acknowledgement-fault-injection-with-real-private-readback",
+  "recoveredFiles": [
+    {
+      "fileName": "Liquid_serverLogics_powerPages.png",
+      "size": 1462990,
+      "sha256": "eae16a1722c8b2c126b94fe9cfdfc168833cd1c24963b49a7d5c8c367102787b"
+    },
+    {
+      "fileName": "Sample File.docx",
+      "size": 17145,
+      "sha256": "eefd92f753648e401bd3a1958305db6eac88f9489daf86a095652da90053567b"
+    }
+  ],
+  "simulatedUploadResponses": [
+    {
+      "id": "f251e9fe-c66b-4abe-b1fc-2beaceb24340",
+      "fileName": "Liquid_serverLogics_powerPages.png",
+      "status": 202
+    },
+    {
+      "id": "89a7249a-ab1c-4f70-8ccc-f9dff1c900ef",
+      "fileName": "Sample File.docx",
+      "status": 202
+    }
+  ],
+  "realPostWrites": 0,
+  "realUploadWrites": 0,
+  "falseUploadWarning": false,
+  "outcome": "Activity and files posted.",
+  "reads": [
+    {
+      "operation": "list"
+    },
+    {
+      "operation": "list"
+    },
+    {
+      "operation": "view",
+      "fileName": "Liquid_serverLogics_powerPages.png"
+    },
+    {
+      "operation": "view",
+      "fileName": "Liquid_serverLogics_powerPages.png"
+    },
+    {
+      "operation": "list"
+    },
+    {
+      "operation": "view",
+      "fileName": "Sample File.docx"
+    },
+    {
+      "operation": "list"
+    }
+  ]
+}

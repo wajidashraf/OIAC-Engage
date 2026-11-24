@@ -1,0 +1,12 @@
+adx_entitypermission_webrole:
+- 0353acdd-7b95-4c07-8997-ae95dafd978d
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: mss_contactdistrictmembership
+entityname: Authenticated Contact District Membership Read
+id: dd9e08c7-c89c-4fdd-bcab-0d56bac30889
+read: true
+scope: 756150000
+write: false

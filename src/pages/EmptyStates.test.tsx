@@ -1,0 +1,39 @@
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import { expect, test } from 'vitest'
+import ActivityLog from './ActivityLog'
+import Events from './Events'
+import MyCalendar from './MyCalendar'
+import MyReports from './MyReports'
+
+test.each([
+  [<MyReports items={[]} />, 'No reports yet', 3],
+  [
+    <MemoryRouter>
+      <MyCalendar
+        contactId="11111111-1111-4111-8111-111111111111"
+        acceptedItems={[]}
+        initialMonth={new Date(2026, 8, 1)}
+        loadRegistrations={() => Promise.resolve([])}
+        loadMeetingInvites={() => Promise.resolve({ contactFullName: 'Sara Rahimi', invites: [] })}
+        loadAppointments={() => Promise.resolve([])}
+      />
+    </MemoryRouter>,
+    'No registered events or accepted meetings yet',
+    2,
+  ],
+  [<ActivityLog items={[]} />, 'No activity yet', 2],
+])('renders an explicit empty state', async (page, heading, level) => {
+  render(page)
+  expect(await screen.findByRole('heading', { name: heading, level })).toBeInTheDocument()
+})
+
+test('renders an explicit Events empty state after loading', async () => {
+  render(
+    <MemoryRouter>
+      <Events isAdmin={false} loadEvents={() => Promise.resolve([])} />
+    </MemoryRouter>,
+  )
+
+  expect(await screen.findByRole('heading', { name: 'No events available', level: 2 })).toBeInTheDocument()
+})

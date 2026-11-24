@@ -1,0 +1,4 @@
+description: Enable read-only Contact district membership retrieval
+id: f5810aad-4820-417e-ae35-851b31fb6ef6
+name: Webapi/mss_contactdistrictmembership/enabled
+value: true

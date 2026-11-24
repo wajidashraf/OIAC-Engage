@@ -1,0 +1,60 @@
+{
+  "verifiedAt": "2026-10-28T16:36:13.664Z",
+  "url": "https://oiac-engage-test.powerappsportals.com/activity/channel",
+  "postId": "76b92c87-b389-5af2-87e6-ba695830a994",
+  "separatePickers": true,
+  "sharedChipsAboveButtons": true,
+  "persistedPhoto": true,
+  "fullSizePhoto": true,
+  "nativePdfPreview": true,
+  "exactTextDownload": true,
+  "commentFileControls": false,
+  "newRecordsOrUploads": 0,
+  "postOnlyAccent": true,
+  "centered350pxThumbnails": true,
+  "compactDocumentChips": true,
+  "commentInputAndButtonOneRow": true,
+  "transfers": [
+    {
+      "operation": "list",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "operation": "list",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "operation": "view",
+      "fileName": "uat-image.png",
+      "status": 200,
+      "ok": true,
+      "returnedSize": 68
+    },
+    {
+      "operation": "list",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "operation": "view",
+      "fileName": "uat-notes.pdf",
+      "status": 200,
+      "ok": true,
+      "returnedSize": 599
+    },
+    {
+      "operation": "list",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "operation": "view",
+      "fileName": "uat-notes.txt",
+      "status": 200,
+      "ok": true,
+      "returnedSize": 39
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+description: Allow the membership identity, related IDs and active state
+id: ce5fbe5e-f676-4ea3-9550-809390788a86
+name: Webapi/mss_contactdistrictmembership/fields
+value: "mss_contactdistrictmembershipid,mss_name,mss_Contact,mss_District,mss_contact,mss_district,_mss_contact_value,_mss_district_value,statecode"

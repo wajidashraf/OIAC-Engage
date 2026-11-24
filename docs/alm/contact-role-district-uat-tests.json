@@ -1,0 +1,709 @@
+{
+  "url": "https://oiac-engage-test.powerappsportals.com/contact",
+  "environmentId": "16838866-275a-e2e7-838f-57313f30a416",
+  "websiteId": "e7f400bd-1e04-4efa-b8b3-7a7a3b168662",
+  "stageName": "Test/UAT",
+  "runAt": "2026-11-13T17:06:41.231Z",
+  "runOutcome": "passed-with-warnings",
+  "scope": "Real portal web-role and active district membership assignments on the existing signed-in Contact",
+  "simulatedClientRoles": false,
+  "caseCount": 13,
+  "passedCases": 13,
+  "cases": [
+    {
+      "status": "passed",
+      "id": "volunteer-one",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Volunteer",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Volunteer",
+      "assignedDistricts": 1,
+      "expectedContacts": 4,
+      "displayedContacts": 4,
+      "pages": 1,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": true,
+      "adminEditDialogOpened": false,
+      "editButtons": 0,
+      "contactReads": 3,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "districtNames": [
+        "AL-02"
+      ]
+    },
+    {
+      "status": "passed",
+      "id": "volunteer-two",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Volunteer",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Volunteer",
+      "assignedDistricts": 2,
+      "expectedContacts": 9,
+      "displayedContacts": 9,
+      "pages": 1,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": true,
+      "adminEditDialogOpened": false,
+      "editButtons": 0,
+      "contactReads": 3,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "districtNames": [
+        "AL-02",
+        "AZ-03"
+      ]
+    },
+    {
+      "status": "passed",
+      "id": "volunteer-three",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Volunteer",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Volunteer",
+      "assignedDistricts": 3,
+      "expectedContacts": 15,
+      "displayedContacts": 15,
+      "pages": 1,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": true,
+      "adminEditDialogOpened": false,
+      "editButtons": 0,
+      "contactReads": 3,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "smoke": {
+        "id": "volunteer-three",
+        "roles": [
+          "Volunteer"
+        ],
+        "pages": [
+          {
+            "path": "/report",
+            "status": 200,
+            "heading": "Meeting Reports",
+            "alerts": []
+          },
+          {
+            "path": "/my-calendar",
+            "status": 200,
+            "heading": "My Calendar",
+            "alerts": []
+          },
+          {
+            "path": "/activity/events",
+            "status": 200,
+            "heading": "Events",
+            "alerts": []
+          },
+          {
+            "path": "/activity/appointments",
+            "status": 200,
+            "heading": "Appointments",
+            "alerts": [],
+            "allAppointmentsButton": 0
+          },
+          {
+            "path": "/press-coverage",
+            "status": 200,
+            "heading": "Press Coverage",
+            "alerts": []
+          },
+          {
+            "path": "/activity/channel",
+            "status": 200,
+            "heading": "Activity Channel",
+            "alerts": []
+          }
+        ],
+        "serverAuthorization": {
+          "moderationMatchesRole": true,
+          "postDeleteMatchesAdminOrOwner": true,
+          "checkedPosts": 7,
+          "adminAppointmentsAuthorized": false,
+          "nonAdminAppointmentsDenied": true,
+          "adminHistoryAuthorized": false,
+          "nonAdminHistoryDenied": true
+        },
+        "runtimeErrors": [],
+        "apiFailures": [],
+        "blockedWrites": [],
+        "businessRecordsWritten": 0
+      },
+      "districtNames": [
+        "AK-01",
+        "AL-02",
+        "AZ-03"
+      ]
+    },
+    {
+      "status": "passed",
+      "id": "volunteer-none",
+      "actualRoles": [
+        "Volunteer",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Volunteer",
+      "assignedDistricts": 0,
+      "expectedContacts": 0,
+      "displayedContacts": 0,
+      "noDistrictState": true,
+      "stateMessages": [
+        "No district is assigned to your profile. Contact an administrator to update your district."
+      ],
+      "membershipResponses": [
+        {
+          "returnedRows": 0,
+          "activeRows": 0
+        }
+      ],
+      "contactReads": 0,
+      "warnings": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "districtNames": []
+    },
+    {
+      "status": "passed",
+      "id": "admin-none",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Administrators",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Administrators",
+      "assignedDistricts": 0,
+      "expectedContacts": 20,
+      "displayedContacts": 20,
+      "pages": 2,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": false,
+      "adminEditDialogOpened": true,
+      "editButtons": 20,
+      "contactReads": 4,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "districtNames": []
+    },
+    {
+      "status": "passed",
+      "id": "admin-three",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Administrators",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Administrators",
+      "assignedDistricts": 3,
+      "expectedContacts": 20,
+      "displayedContacts": 20,
+      "pages": 2,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": false,
+      "adminEditDialogOpened": true,
+      "editButtons": 20,
+      "contactReads": 4,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "smoke": {
+        "id": "admin-three",
+        "roles": [
+          "Administrators"
+        ],
+        "pages": [
+          {
+            "path": "/report",
+            "status": 200,
+            "heading": "Meeting Reports",
+            "alerts": []
+          },
+          {
+            "path": "/my-calendar",
+            "status": 200,
+            "heading": "My Calendar",
+            "alerts": []
+          },
+          {
+            "path": "/activity/events",
+            "status": 200,
+            "heading": "Events",
+            "alerts": []
+          },
+          {
+            "path": "/activity/appointments",
+            "status": 200,
+            "heading": "Appointments",
+            "alerts": [],
+            "allAppointmentsButton": 1
+          },
+          {
+            "path": "/press-coverage",
+            "status": 200,
+            "heading": "Press Coverage",
+            "alerts": []
+          },
+          {
+            "path": "/activity/channel",
+            "status": 200,
+            "heading": "Activity Channel",
+            "alerts": []
+          }
+        ],
+        "serverAuthorization": {
+          "moderationMatchesRole": true,
+          "postDeleteMatchesAdminOrOwner": true,
+          "checkedPosts": 7,
+          "adminAppointmentsAuthorized": true,
+          "nonAdminAppointmentsDenied": false,
+          "adminHistoryAuthorized": true,
+          "nonAdminHistoryDenied": false
+        },
+        "runtimeErrors": [],
+        "apiFailures": [],
+        "blockedWrites": [],
+        "businessRecordsWritten": 0
+      },
+      "districtNames": [
+        "AK-01",
+        "AL-02",
+        "AZ-03"
+      ]
+    },
+    {
+      "status": "passed",
+      "id": "admin-staff-volunteer",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Staff",
+        "Administrators",
+        "Volunteer",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Administrators",
+      "assignedDistricts": 1,
+      "expectedContacts": 20,
+      "displayedContacts": 20,
+      "pages": 2,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": false,
+      "adminEditDialogOpened": true,
+      "editButtons": 20,
+      "contactReads": 4,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "districtNames": [
+        "AL-02"
+      ]
+    },
+    {
+      "status": "passed",
+      "id": "staff-one",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Staff",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Staff",
+      "assignedDistricts": 1,
+      "expectedContacts": 6,
+      "displayedContacts": 6,
+      "pages": 1,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": true,
+      "adminEditDialogOpened": false,
+      "editButtons": 0,
+      "contactReads": 3,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "districtNames": [
+        "AZ-03"
+      ]
+    },
+    {
+      "status": "passed",
+      "id": "staff-two",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Staff",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Staff",
+      "assignedDistricts": 2,
+      "expectedContacts": 12,
+      "displayedContacts": 12,
+      "pages": 1,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": true,
+      "adminEditDialogOpened": false,
+      "editButtons": 0,
+      "contactReads": 3,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "smoke": {
+        "id": "staff-two",
+        "roles": [
+          "Staff"
+        ],
+        "pages": [
+          {
+            "path": "/report",
+            "status": 200,
+            "heading": "Meeting Reports",
+            "alerts": []
+          },
+          {
+            "path": "/my-calendar",
+            "status": 200,
+            "heading": "My Calendar",
+            "alerts": []
+          },
+          {
+            "path": "/activity/events",
+            "status": 200,
+            "heading": "Events",
+            "alerts": []
+          },
+          {
+            "path": "/activity/appointments",
+            "status": 200,
+            "heading": "Appointments",
+            "alerts": [],
+            "allAppointmentsButton": 0
+          },
+          {
+            "path": "/press-coverage",
+            "status": 200,
+            "heading": "Press Coverage",
+            "alerts": []
+          },
+          {
+            "path": "/activity/channel",
+            "status": 200,
+            "heading": "Activity Channel",
+            "alerts": []
+          }
+        ],
+        "serverAuthorization": {
+          "moderationMatchesRole": true,
+          "postDeleteMatchesAdminOrOwner": true,
+          "checkedPosts": 7,
+          "adminAppointmentsAuthorized": false,
+          "nonAdminAppointmentsDenied": true,
+          "adminHistoryAuthorized": false,
+          "nonAdminHistoryDenied": true
+        },
+        "runtimeErrors": [],
+        "apiFailures": [],
+        "blockedWrites": [],
+        "businessRecordsWritten": 0
+      },
+      "districtNames": [
+        "AK-01",
+        "AZ-03"
+      ]
+    },
+    {
+      "status": "passed",
+      "id": "applicant-one",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Applicant",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Volunteer",
+      "assignedDistricts": 1,
+      "expectedContacts": 7,
+      "displayedContacts": 7,
+      "pages": 1,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": true,
+      "adminEditDialogOpened": false,
+      "editButtons": 0,
+      "contactReads": 3,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "smoke": {
+        "id": "applicant-one",
+        "roles": [
+          "Applicant"
+        ],
+        "pages": [
+          {
+            "path": "/report",
+            "status": 200,
+            "heading": "Meeting Reports",
+            "alerts": []
+          },
+          {
+            "path": "/my-calendar",
+            "status": 200,
+            "heading": "My Calendar",
+            "alerts": []
+          },
+          {
+            "path": "/activity/events",
+            "status": 200,
+            "heading": "Events",
+            "alerts": []
+          },
+          {
+            "path": "/activity/appointments",
+            "status": 200,
+            "heading": "Appointments",
+            "alerts": [],
+            "allAppointmentsButton": 0
+          },
+          {
+            "path": "/press-coverage",
+            "status": 200,
+            "heading": "Press Coverage",
+            "alerts": []
+          },
+          {
+            "path": "/activity/channel",
+            "status": 200,
+            "heading": "Activity Channel",
+            "alerts": []
+          }
+        ],
+        "serverAuthorization": {
+          "moderationMatchesRole": true,
+          "postDeleteMatchesAdminOrOwner": true,
+          "checkedPosts": 7,
+          "adminAppointmentsAuthorized": false,
+          "nonAdminAppointmentsDenied": true,
+          "adminHistoryAuthorized": false,
+          "nonAdminHistoryDenied": true
+        },
+        "runtimeErrors": [],
+        "apiFailures": [],
+        "blockedWrites": [],
+        "businessRecordsWritten": 0
+      },
+      "districtNames": [
+        "AK-01"
+      ]
+    },
+    {
+      "status": "passed",
+      "id": "staff-volunteer-two",
+      "navigationStatus": 200,
+      "actualRoles": [
+        "Staff",
+        "Volunteer",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Staff",
+      "assignedDistricts": 2,
+      "expectedContacts": 9,
+      "displayedContacts": 9,
+      "pages": 1,
+      "rootIdsUnique": true,
+      "caseInsensitiveEmailSearch": true,
+      "outOfDistrictSearchExcluded": true,
+      "adminEditDialogOpened": false,
+      "editButtons": 0,
+      "contactReads": 3,
+      "alerts": [],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "districtNames": [
+        "AL-02",
+        "AZ-03"
+      ]
+    },
+    {
+      "status": "passed",
+      "id": "applicant-none",
+      "actualRoles": [
+        "Applicant",
+        "Authenticated Users"
+      ],
+      "accountLabel": "Account menu for Volunteer",
+      "assignedDistricts": 0,
+      "expectedContacts": 0,
+      "displayedContacts": 0,
+      "noDistrictState": false,
+      "stateMessages": [
+        "No contacts are available in your district."
+      ],
+      "membershipResponses": [
+        {
+          "returnedRows": 2,
+          "activeRows": 2
+        }
+      ],
+      "contactReads": 1,
+      "warnings": [
+        "No active districts: Contacts are empty, but cached membership data retains the generic empty-list state."
+      ],
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "districtNames": []
+    },
+    {
+      "status": "passed",
+      "id": "authenticated-only",
+      "actualRoles": [
+        "Authenticated Users"
+      ],
+      "approvalGate": true,
+      "contactReads": 0,
+      "errors": [],
+      "apiFailures": [],
+      "blocked": [],
+      "districtNames": [
+        "AK-01",
+        "AL-02",
+        "AZ-03"
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "case": "observed-current-assignments",
+      "code": "membership-lookup-cache",
+      "severity": "medium",
+      "message": "The portal membership lookup returned a previous district while Dataverse and the displayed Contact list reflected the current district. Inference from this observation and the existing frontend gate: a cached empty lookup can delay visibility after membership is reactivated until the cache refreshes."
+    },
+    {
+      "case": "applicant-one",
+      "code": "applicant-account-label",
+      "severity": "low",
+      "message": "The actual session role is Applicant, but the account-menu label says Volunteer."
+    },
+    {
+      "case": "applicant-none",
+      "code": "assignment-propagation",
+      "severity": "low",
+      "message": "No active districts: Contacts are empty, but cached membership data retains the generic empty-list state."
+    },
+    {
+      "case": "applicant-none",
+      "code": "applicant-account-label",
+      "severity": "low",
+      "message": "The actual session role is Applicant, but the account-menu label says Volunteer."
+    }
+  ],
+  "failures": [],
+  "cacheObservation": {
+    "observedAt": "2026-11-13T17:02:44.481Z",
+    "nativeDistrictIds": [
+      "61e6932a-fcf2-f011-8406-7ced8d3c3e90"
+    ],
+    "portalDistrictIds": [
+      "9b9461cf-64a5-f111-b8dd-002248042536"
+    ],
+    "nativeAssignedDistrictCount": 1,
+    "portalAssignedDistrictCount": 1,
+    "membershipLookupWasStale": true,
+    "expectedContacts": 7,
+    "visibleContacts": 7,
+    "actualRoles": [
+      "Applicant",
+      "Authenticated Users"
+    ],
+    "clientRolesSimulated": false
+  },
+  "restoration": {
+    "exactRolesRestored": true,
+    "roleDefinitionsUnchanged": true,
+    "allMembershipIdsDistrictsAndStatesRestored": true,
+    "contactFieldsUnchanged": true,
+    "originalRoleCount": 2,
+    "originalMembershipCount": 3,
+    "totalMemberships": 17,
+    "createdContacts": 0,
+    "createdMemberships": 0,
+    "deletedContacts": 0,
+    "restoredAt": "2026-11-13T17:06:18.477Z",
+    "browserRoleRestored": [
+      "Volunteer",
+      "Authenticated Users"
+    ],
+    "restoredContactCount": 15,
+    "restoredBrowserVerified": true
+  },
+  "servedAssets": [
+    {
+      "name": "index-C-9auer1.css",
+      "path": "/assets/index-C-9auer1.css",
+      "status": 200,
+      "matches": true,
+      "sha256": "d8e2078dc472610b6cb2ee6bc17c829715cd608036d5b5001e606b7dbe2e56aa",
+      "expectedSha256": "d8e2078dc472610b6cb2ee6bc17c829715cd608036d5b5001e606b7dbe2e56aa"
+    },
+    {
+      "name": "index-CK_CLIz0.js",
+      "path": "/assets/index-CK_CLIz0.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "e6a281afd2c819a990403d157056fb2c5e17915b116caaea95a499ad7f2dc225",
+      "expectedSha256": "e6a281afd2c819a990403d157056fb2c5e17915b116caaea95a499ad7f2dc225"
+    }
+  ],
+  "applicationCodeChanged": false,
+  "siteConfigurationDefinitionsChanged": false,
+  "globalPermissionsChanged": false,
+  "productionChanged": false,
+  "businessRecordsCreated": 0,
+  "businessRecordsDeleted": 0,
+  "limitations": [
+    "Role links and district membership states were changed temporarily and restored exactly. System audit timestamps may reflect those authorized tests.",
+    "Contact edit dialogs and role-dependent controls were inspected without saving. No post, comment, report or appointment was submitted or deleted.",
+    "Power Pages propagation delays were observed. Tests waited for the actual hosted role; delayed/failed harness attempts are excluded from final passing cases.",
+    "Existing global Contact access remains intentional. The directory filtering is not a new district-level API confidentiality boundary."
+  ],
+  "cacheReference": "https://learn.microsoft.com/en-us/power-pages/admin/clear-server-side-cache",
+  "servedAssetsUnchanged": true,
+  "followUp": [
+    {
+      "finding": "applicant-account-label",
+      "source": "src/components/PortalNav.tsx:32",
+      "recommendation": "Use the actual primary-role helper for the Applicant account label."
+    },
+    {
+      "finding": "membership-lookup-cache",
+      "source": "src/features/contacts/useDistrictContacts.ts:104",
+      "recommendation": "Return authoritative membership presence from the existing trusted directory API and remove the cached Web API membership gate."
+    }
+  ],
+  "fixesImplemented": false
+}

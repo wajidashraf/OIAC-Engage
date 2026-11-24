@@ -1,0 +1,6 @@
+adx_serverlogic_adx_webrole:
+  - 0353acdd-7b95-4c07-8997-ae95dafd978d
+description: 'Read-only shared-district Contact directory with session-stamped actor and native Dataverse paging.'
+display_name: 'Contact directory'
+id: 67c36539-00db-4aee-89db-cbdfe38b79ae
+name: contact-directory

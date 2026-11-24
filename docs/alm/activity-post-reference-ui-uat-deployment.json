@@ -1,0 +1,31 @@
+{
+  "verifiedAt": "2026-10-28T15:25:03.372Z",
+  "environmentId": "16838866-275a-e2e7-838f-57313f30a416",
+  "websiteId": "e7f400bd-1e04-4efa-b8b3-7a7a3b168662",
+  "url": "https://oiac-engage-test.powerappsportals.com/activity/channel",
+  "flowId": "3d2d6112-bcd2-f111-a059-000d3a35b61f",
+  "deployment": "uploaded-and-exact-assets-read-back",
+  "assetHashes": {
+    "index-CWVdbuyM.js": "32a6331eed8edcb0466d8440af94c5429219badbf609b44c38bb790f78041fe7",
+    "index-oTAMzmXN.css": "07a32b3f9a35ef5879a54ee309a58fe56594f1094fd14cc29b20640bfad1d510"
+  },
+  "protectedFilesPreserved": 155,
+  "protectedChanges": [],
+  "currentAssetPageReferences": [
+    "web-files\\index_69cdb9c9.html\\index_69CDB9C9.html",
+    "web-pages\\home\\content-pages\\en-US\\Home.webpage.copy.html"
+  ],
+  "localTests": {
+    "files": 87,
+    "passed": 1096
+  },
+  "localBrowserWidths": [
+    1440,
+    390
+  ],
+  "hostedUploadAcceptance": "existing-verified-upload-retrieved-with-new-ui",
+  "productionChanged": false,
+  "protectedSourceFilesPreserved": 5,
+  "hostedVerification": "activity-post-reference-ui-hosted.json",
+  "runtimeSiteId": "5fb3972a-5518-4b27-a8e2-21abd2963fdc"
+}

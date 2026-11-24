@@ -1,0 +1,521 @@
+import { StrictMode } from 'react'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter, useLocation } from 'react-router-dom'
+import { afterEach, beforeEach, expect, test, vi } from 'vitest'
+import App from './App'
+import type { AuthSession } from './auth/powerPagesSession'
+import type { DistrictContactsState } from './features/contacts/useDistrictContacts'
+import { useDistrictContacts } from './features/contacts/useDistrictContacts'
+import { REGISTRATION_PROFILE_STORAGE_KEY } from './features/registrationProfile/registrationProfile'
+import { clearPowerPagesRequestVerificationToken } from './shared/powerPagesApi'
+
+vi.mock('./features/contacts/useDistrictContacts', () => ({
+  useDistrictContacts: vi.fn(),
+}))
+
+const useDistrictContactsMock = vi.mocked(useDistrictContacts)
+const appContactDirectoryState: DistrictContactsState = {
+  contacts: [{
+    id: '10000000-0000-0000-0000-000000000001',
+    fullName: 'Sara Rahimi',
+    firstName: 'Sara',
+    lastName: 'Rahimi',
+    email: 'sara@example.org',
+    jobTitle: 'Volunteer Coordinator',
+    mobilePhone: '202-555-0100',
+    city: 'Washington',
+    stateOrProvince: 'DC',
+    postalCode: '20001',
+    districtName: 'District 1',
+    districtId: '367d7420-d8a2-f111-b8da-7ced8d70f293',
+  }],
+  search: '',
+  setSearch: vi.fn(),
+  page: 1,
+  hasNext: false,
+  isLoading: false,
+  status: 'ready',
+  errorMessage: null,
+  nextPage: vi.fn(),
+  previousPage: vi.fn(),
+  retry: vi.fn(),
+  reload: vi.fn(),
+}
+
+const authenticatedSession: AuthSession = {
+  status: 'authenticated',
+  user: {
+    userName: 'member@oiac.org',
+    firstName: 'OIAC',
+    lastName: 'Member',
+    contactId: '11111111-1111-4111-8111-111111111111',
+    userRoles: ['Authenticated Users', 'Volunteer'],
+  },
+}
+
+const protectedRoutes = [
+  '/',
+  '/my-reports',
+  '/contact',
+  '/user-profile',
+  '/activity',
+  '/activity/events',
+  '/report',
+  '/report/new',
+  '/report/11111111-1111-4111-8111-111111111111/edit',
+  '/resources',
+  '/resources/volunteer-onboarding-guide',
+  '/resources/teams-quick-start',
+  '/resources/meeting-report-instructions',
+  '/unknown',
+] as const
+
+const deniedSession: AuthSession = {
+  status: 'authenticated',
+  user: {
+    userName: 'pending@oiac.org',
+    contactId: '11111111-1111-4111-8111-111111111111',
+    userRoles: ['Authenticated Users'],
+  },
+}
+
+beforeEach(() => {
+  sessionStorage.clear()
+  clearPowerPagesRequestVerificationToken()
+  useDistrictContactsMock.mockReturnValue(appContactDirectoryState)
+})
+
+afterEach(() => {
+  sessionStorage.clear()
+  clearPowerPagesRequestVerificationToken()
+  vi.restoreAllMocks()
+  vi.unstubAllGlobals()
+})
+
+function storePendingRegistrationProfile(): void {
+  sessionStorage.setItem(REGISTRATION_PROFILE_STORAGE_KEY, JSON.stringify({
+    version: 1,
+    firstName: 'Ada',
+    lastName: 'Lovelace',
+    email: deniedSession.status === 'authenticated' ? deniedSession.user.userName : '',
+    username: '',
+    createdAt: Date.now(),
+  }))
+}
+
+function LocationProbe() {
+  const location = useLocation()
+  return <output data-testid="current-path">{location.pathname}</output>
+}
+
+function renderApp(
+  route: string,
+  session: AuthSession = authenticatedSession,
+  navigate = vi.fn(),
+) {
+  return render(
+    <MemoryRouter initialEntries={[route]}>
+      <App session={session} navigate={navigate} />
+      <LocationProbe />
+    </MemoryRouter>,
+  )
+}
+
+function renderAppFromPowerPages(route: string) {
+  return render(
+    <MemoryRouter initialEntries={[route]}>
+      <App />
+      <LocationProbe />
+    </MemoryRouter>,
+  )
+}
+
+test.each([
+  ['/', 'Volunteer'],
+  ['/report', 'Meeting Reports'],
+  ['/report/new', 'Meeting Reports'],
+  ['/report/advocacy-briefing-chen/edit', 'Meeting Reports'],
+  ['/my-reports', 'My Reports'],
+  ['/my-calendar', 'My Calendar'],
+  ['/contact', 'Contacts'],
+  ['/user-profile', 'My Profile'],
+  ['/activity/activity-log', 'Activity Channel'],
+  ['/activity/channel', 'Activity Channel'],
+  ['/activity/events', 'Events'],
+  ['/activity/appointments', 'Appointments'],
+  ['/press-coverage', 'Press Coverage'],
+  ['/activity', 'Events'],
+  ['/unknown', 'Page not found'],
+])('renders %s as %s', (route, heading) => {
+  renderApp(route)
+  expect(screen.getByRole('heading', { name: heading, level: 1 })).toBeInTheDocument()
+})
+
+test('wires the exact Administrators role into the Contact directory', () => {
+  const adminSession: AuthSession = {
+    ...authenticatedSession,
+    user: { ...authenticatedSession.user, userRoles: ['Authenticated Users', 'Administrators'] },
+  }
+  const adminView = renderApp('/contact', adminSession)
+
+  expect(screen.getByText('All active contacts across all districts.')).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Edit Sara Rahimi' })).toBeInTheDocument()
+  adminView.unmount()
+
+  renderApp('/contact', authenticatedSession)
+  expect(screen.getByText('Contacts assigned to your linked districts.')).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: /Edit Sara Rahimi/ })).not.toBeInTheDocument()
+})
+
+test('allows an authenticated pending user to read coverage while preserving approval restrictions', () => {
+  renderApp('/press-coverage', deniedSession)
+  expect(screen.getByRole('heading', { name: 'Press Coverage', level: 1 })).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: '+ Add Coverage' })).not.toBeInTheDocument()
+  expect(screen.getByTestId('current-path')).toHaveTextContent('/press-coverage')
+  expect(screen.queryByRole('navigation', { name: 'Primary navigation' })).not.toBeInTheDocument()
+})
+
+test('allows pending users to view their appointment requests without unlocking creation or other routes', () => {
+  renderApp('/activity/appointments', deniedSession)
+  expect(screen.getByRole('heading', { name: 'Appointments', level: 1 })).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: '+ Request Appointment' })).not.toBeInTheDocument()
+  expect(screen.getByTestId('current-path')).toHaveTextContent('/activity/appointments')
+  expect(screen.queryByRole('navigation', { name: 'Primary navigation' })).not.toBeInTheDocument()
+})
+
+test('moves keyboard focus to the page heading after client-side navigation', async () => {
+  const user = userEvent.setup()
+  renderApp('/')
+
+  await user.click(screen.getByRole('link', { name: '+ Submit Report' }))
+  expect(screen.getByRole('heading', { name: 'Meeting Reports', level: 1 })).toHaveFocus()
+})
+
+test('keeps the skip link as the first tab stop on initial load', async () => {
+  const user = userEvent.setup()
+  renderApp('/')
+
+  expect(document.body).toHaveFocus()
+  await user.tab()
+  expect(screen.getByRole('link', { name: 'Skip to main content' })).toHaveFocus()
+})
+
+test('renders the authenticated footer links from the portal reference', () => {
+  renderApp('/contact')
+
+  const footer = screen.getByRole('contentinfo')
+  expect(within(footer).getByText('Organization of Iranian American Communities — U.S.')).toBeInTheDocument()
+  expect(within(footer).getByRole('link', { name: 'oiac.org' })).toHaveAttribute('href', 'https://oiac.org')
+  expect(within(footer).getByRole('link', { name: 'Resources' })).toHaveAttribute('href', '/resources')
+  expect(within(footer).getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '/contact')
+})
+
+test('aligns the header, page content, and footer inside the shared site container', () => {
+  renderApp('/contact')
+
+  expect(document.querySelector('.site-header')?.firstElementChild).toHaveClass('site-container')
+  expect(screen.getByRole('main').firstElementChild).toHaveClass('site-container')
+  expect(screen.getByRole('contentinfo').firstElementChild).toHaveClass('site-container')
+})
+
+test.each([
+  '/',
+  '/my-reports',
+  '/resources',
+  '/report',
+  '/press-coverage',
+  '/activity/appointments',
+  '/activity/channel',
+  '/activity/activity-log',
+])('shows only the anonymous welcome experience at %s without a session', (route) => {
+  const navigate = vi.fn()
+  renderApp(route, { status: 'anonymous' }, navigate)
+
+  expect(screen.getByRole('heading', { name: 'OIAC Engage', level: 1 })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Sign In to Get Started' })).toHaveAttribute(
+    'href',
+    '/SignIn?returnUrl=%2F',
+  )
+  expect(screen.queryByRole('navigation', { name: 'Primary navigation' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'My Reports' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Meeting Reports' })).not.toBeInTheDocument()
+  expect(navigate).not.toHaveBeenCalled()
+})
+
+test('renders Resources only for an authenticated session', () => {
+  renderApp('/resources')
+
+  expect(screen.getByRole('heading', { name: 'Resources', level: 1 })).toBeInTheDocument()
+  const primaryNavigation = screen.getByRole('navigation', { name: 'Primary navigation' })
+  expect(within(primaryNavigation).queryByRole('link', { name: 'Resources' })).not.toBeInTheDocument()
+})
+
+test.each([
+  ['/resources/volunteer-onboarding-guide', 'Volunteer Onboarding Guide'],
+  ['/resources/teams-quick-start', 'Teams Quick Start'],
+  ['/resources/meeting-report-instructions', 'Meeting Report Instructions'],
+])('renders the training resource route %s for an authenticated session', (route, title) => {
+  renderApp(route)
+
+  expect(screen.getByRole('heading', { name: title, level: 1 })).toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Page not found' })).not.toBeInTheDocument()
+})
+
+test.each(protectedRoutes)('redirects a denied signed-in user from %s', async (route) => {
+  renderApp(route, deniedSession)
+
+  expect(screen.getByRole('heading', { name: 'Your profile is under review', level: 1 })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Sign Out' })).toHaveAttribute(
+    'href',
+    '/Account/Login/LogOff?returnUrl=%2F',
+  )
+  expect(screen.queryByRole('navigation', { name: 'Primary navigation' })).not.toBeInTheDocument()
+
+  await waitFor(() => {
+    expect(screen.getByTestId('current-path')).toHaveTextContent('/pending-approval')
+  })
+})
+
+test('renders My Calendar for an authenticated user without a functional Web Role', () => {
+  renderApp('/my-calendar', deniedSession)
+
+  expect(screen.getByRole('heading', { name: 'My Calendar', level: 1 })).toBeInTheDocument()
+  expect(screen.getByTestId('current-path')).toHaveTextContent('/my-calendar')
+  expect(screen.queryByRole('navigation', { name: 'Primary navigation' })).not.toBeInTheDocument()
+})
+
+test.each(['/activity/channel', '/activity/activity-log'])('allows pending authenticated users at %s with full navigation', (route) => {
+  renderApp(route, deniedSession)
+  expect(screen.getByRole('heading', { name: 'Activity Channel', level: 1 })).toBeInTheDocument()
+  expect(screen.getByRole('navigation', { name: 'Primary navigation' })).toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Your profile is under review' })).not.toBeInTheDocument()
+})
+
+test.each([
+  ['administrator', ['Authenticated Users', 'Administrators']],
+  ['multi-role user', ['Authenticated Users', 'Staff', 'Volunteer']],
+])('renders My Calendar for an %s', (_label, userRoles) => {
+  renderApp('/my-calendar', {
+    status: 'authenticated',
+    user: {
+      userName: 'calendar-user@oiac.org',
+      contactId: '11111111-1111-4111-8111-111111111111',
+      userRoles,
+    },
+  })
+
+  expect(screen.getByRole('heading', { name: 'My Calendar', level: 1 })).toBeInTheDocument()
+  expect(screen.getByTestId('current-path')).toHaveTextContent('/my-calendar')
+})
+
+test.each(['Administrators', 'Staff', 'Volunteer', 'Applicant'])(
+  'allows an authenticated user with the %s role into the portal',
+  (role) => {
+    renderApp('/resources', {
+      status: 'authenticated',
+      user: {
+        userName: 'approved@oiac.org',
+        userRoles: ['Authenticated Users', role],
+      },
+    })
+
+    expect(screen.getByRole('heading', { name: 'Resources', level: 1 })).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Primary navigation' })).toBeInTheDocument()
+  },
+)
+
+test('redirects an approved user from the stale pending-approval URL to Home', async () => {
+  renderApp('/pending-approval')
+
+  expect(screen.getByRole('heading', { name: 'Volunteer', level: 1 })).toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Your profile is under review' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Page not found' })).not.toBeInTheDocument()
+  expect(screen.getByRole('navigation', { name: 'Primary navigation' })).toBeInTheDocument()
+  await waitFor(() => {
+    expect(screen.getByTestId('current-path')).toHaveTextContent('/')
+  })
+})
+
+test('does not start protected page requests before portal access is approved', () => {
+  const fetchSpy = vi.spyOn(globalThis, 'fetch')
+
+  renderApp('/activity/events', deniedSession)
+
+  expect(fetchSpy).not.toHaveBeenCalled()
+})
+
+test('blocks every route while the newly registered Contact profile is being completed', async () => {
+  storePendingRegistrationProfile()
+  let resolveContactUpdate!: (response: Response) => void
+  const contactUpdate = new Promise<Response>((resolve) => {
+    resolveContactUpdate = resolve
+  })
+  const fetchMock = vi.fn((input: RequestInfo | URL) => {
+    const path = String(input)
+    if (path === '/_layout/tokenhtml') {
+      return Promise.resolve(new Response(
+        '<input name="__RequestVerificationToken" value="verification-token">',
+        { status: 200 },
+      ))
+    }
+    if (path.startsWith('/_api/contacts(')) return contactUpdate
+    return Promise.reject(new Error(`Unexpected request: ${path}`))
+  })
+  vi.stubGlobal('fetch', fetchMock)
+
+  renderApp('/resources', deniedSession)
+
+  expect(screen.getByRole('heading', { name: 'Completing your profile', level: 1 })).toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Your profile is under review' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Resources' })).not.toBeInTheDocument()
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/_api/contacts(11111111-1111-4111-8111-111111111111)',
+      expect.objectContaining({ method: 'PATCH' }),
+    )
+  })
+
+  resolveContactUpdate(new Response(null, { status: 204 }))
+
+  expect(await screen.findByRole('heading', {
+    name: 'Your profile is under review',
+    level: 1,
+  })).toBeInTheDocument()
+  expect(sessionStorage.getItem(REGISTRATION_PROFILE_STORAGE_KEY)).toBeNull()
+})
+
+test('keeps routing blocked after a profile update error and retries successfully', async () => {
+  storePendingRegistrationProfile()
+  const contactResponses = [
+    new Response(JSON.stringify({ error: { message: 'Dataverse unavailable' } }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    }),
+    new Response(null, { status: 204 }),
+  ]
+  const fetchMock = vi.fn((input: RequestInfo | URL) => {
+    const path = String(input)
+    if (path === '/_layout/tokenhtml') {
+      return Promise.resolve(new Response(
+        '<input name="__RequestVerificationToken" value="verification-token">',
+        { status: 200 },
+      ))
+    }
+    if (path.startsWith('/_api/contacts(')) return Promise.resolve(contactResponses.shift()!)
+    return Promise.reject(new Error(`Unexpected request: ${path}`))
+  })
+  vi.stubGlobal('fetch', fetchMock)
+  const user = userEvent.setup()
+
+  renderApp('/resources', deniedSession)
+
+  expect(await screen.findByRole('heading', {
+    name: 'We couldn’t finish your profile',
+    level: 1,
+  })).toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Your profile is under review' })).not.toBeInTheDocument()
+  expect(sessionStorage.getItem(REGISTRATION_PROFILE_STORAGE_KEY)).not.toBeNull()
+
+  await user.click(screen.getByRole('button', { name: 'Retry' }))
+
+  expect(await screen.findByRole('heading', {
+    name: 'Your profile is under review',
+    level: 1,
+  })).toBeInTheDocument()
+  expect(fetchMock.mock.calls.filter(([input]) => String(input).startsWith('/_api/contacts('))).toHaveLength(2)
+})
+
+test('releases routing when a failed pending profile expires before Retry', async () => {
+  storePendingRegistrationProfile()
+  const fetchMock = vi.fn((input: RequestInfo | URL) => {
+    const path = String(input)
+    if (path === '/_layout/tokenhtml') {
+      return Promise.resolve(new Response(
+        '<input name="__RequestVerificationToken" value="verification-token">',
+        { status: 200 },
+      ))
+    }
+    if (path.startsWith('/_api/contacts(')) {
+      return Promise.resolve(new Response(null, { status: 503 }))
+    }
+    return Promise.reject(new Error(`Unexpected request: ${path}`))
+  })
+  vi.stubGlobal('fetch', fetchMock)
+  const user = userEvent.setup()
+
+  renderApp('/resources', deniedSession)
+  expect(await screen.findByRole('heading', {
+    name: 'We couldn’t finish your profile',
+    level: 1,
+  })).toBeInTheDocument()
+
+  const pending = JSON.parse(sessionStorage.getItem(REGISTRATION_PROFILE_STORAGE_KEY)!)
+  sessionStorage.setItem(REGISTRATION_PROFILE_STORAGE_KEY, JSON.stringify({
+    ...pending,
+    createdAt: Date.now() - (31 * 60 * 1000),
+  }))
+  await user.click(screen.getByRole('button', { name: 'Retry' }))
+
+  expect(await screen.findByRole('heading', {
+    name: 'Your profile is under review',
+    level: 1,
+  })).toBeInTheDocument()
+  expect(sessionStorage.getItem(REGISTRATION_PROFILE_STORAGE_KEY)).toBeNull()
+  expect(fetchMock.mock.calls.filter(([input]) => String(input).startsWith('/_api/contacts('))).toHaveLength(1)
+})
+
+test('starts only one Contact update when React Strict Mode replays effects', async () => {
+  storePendingRegistrationProfile()
+  const fetchMock = vi.fn((input: RequestInfo | URL) => {
+    const path = String(input)
+    if (path === '/_layout/tokenhtml') {
+      return Promise.resolve(new Response(
+        '<input name="__RequestVerificationToken" value="verification-token">',
+        { status: 200 },
+      ))
+    }
+    if (path.startsWith('/_api/contacts(')) return Promise.resolve(new Response(null, { status: 204 }))
+    return Promise.reject(new Error(`Unexpected request: ${path}`))
+  })
+  vi.stubGlobal('fetch', fetchMock)
+
+  render(
+    <StrictMode>
+      <MemoryRouter initialEntries={['/resources']}>
+        <App session={deniedSession} />
+      </MemoryRouter>
+    </StrictMode>,
+  )
+
+  expect(await screen.findByRole('heading', {
+    name: 'Your profile is under review',
+    level: 1,
+  })).toBeInTheDocument()
+  expect(fetchMock.mock.calls.filter(([input]) => String(input).startsWith('/_api/contacts('))).toHaveLength(1)
+})
+
+test('rechecks Power Pages roles before rendering a client-side destination', async () => {
+  const user = userEvent.setup()
+  const portalUser = {
+    userName: 'member@oiac.org',
+    contactId: '11111111-1111-4111-8111-111111111111',
+    userRoles: ['Authenticated Users', 'Volunteer'],
+  }
+
+  vi.stubGlobal('Microsoft', {
+    Dynamic365: { Portal: { User: portalUser } },
+  })
+  renderAppFromPowerPages('/resources')
+  expect(screen.getByRole('heading', { name: 'Resources', level: 1 })).toBeInTheDocument()
+
+  portalUser.userRoles = ['Authenticated Users']
+  await user.click(within(screen.getByRole('navigation', { name: 'Primary navigation' }))
+    .getByRole('link', { name: 'Contact' }))
+
+  expect(screen.getByRole('heading', { name: 'Your profile is under review', level: 1 })).toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Contacts', level: 1 })).not.toBeInTheDocument()
+  await waitFor(() => {
+    expect(screen.getByTestId('current-path')).toHaveTextContent('/pending-approval')
+  })
+})

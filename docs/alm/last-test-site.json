@@ -1,0 +1,218 @@
+{
+  "url": "https://oiac.powerappsportals.com",
+  "stageName": "Production",
+  "runAt": "2026-11-13T21:48:09.774Z",
+  "runOutcome": "passed",
+  "categories": [
+    {
+      "id": "site-load",
+      "name": "Site Load",
+      "tests": [
+        {
+          "id": "prod-1",
+          "name": "Production homepage returns HTTP 200 and renders",
+          "severity": "critical",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        }
+      ]
+    },
+    {
+      "id": "authentication",
+      "name": "Authentication",
+      "tests": [
+        {
+          "id": "prod-2",
+          "name": "User-controlled sign-in identifies the existing administrator",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        }
+      ]
+    },
+    {
+      "id": "auth-pages",
+      "name": "Authenticated Pages",
+      "tests": [
+        {
+          "id": "prod-3",
+          "name": "Meeting Reports renders without alerts",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-4",
+          "name": "My Calendar renders without alerts",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-5",
+          "name": "Events renders without alerts",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-6",
+          "name": "Appointments renders without alerts",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-7",
+          "name": "Press Coverage renders without alerts",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-8",
+          "name": "Activity Channel renders without alerts",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-9",
+          "name": "Contacts: two pages and partial-name search",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-10",
+          "name": "Other production roles and multiple-district assignments",
+          "severity": "low",
+          "type": "automated",
+          "status": "skipped",
+          "description": "No production roles or memberships changed for verification; 13 combinations were tested in Test/UAT."
+        }
+      ]
+    },
+    {
+      "id": "auth-api",
+      "name": "Authenticated API",
+      "tests": [
+        {
+          "id": "prod-11",
+          "name": "Activity feed and administrator controls",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-12",
+          "name": "Administrator appointment reads",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-13",
+          "name": "Appointment contact search",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-14",
+          "name": "Appointment contact pagination",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-15",
+          "name": "Activity history reads",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-16",
+          "name": "Existing post attachment listing",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-17",
+          "name": "District-scoped directory returns the expected empty set for this user without memberships",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-18",
+          "name": "Membership Web API reads successfully",
+          "severity": "high",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        },
+        {
+          "id": "prod-19",
+          "name": "Production attachment upload",
+          "severity": "low",
+          "type": "automated",
+          "status": "skipped",
+          "description": "No production files or posts created."
+        },
+        {
+          "id": "prod-20",
+          "name": "Production attachment content download",
+          "severity": "low",
+          "type": "automated",
+          "status": "skipped",
+          "description": "The existing post used for the direct list probe has no attachments."
+        }
+      ]
+    },
+    {
+      "id": "console",
+      "name": "Console Health",
+      "tests": [
+        {
+          "id": "prod-21",
+          "name": "No runtime page errors or failed APIs during the successful smoke run",
+          "severity": "medium",
+          "type": "automated",
+          "status": "passed",
+          "description": "Observed in the signed-in production browser."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "critical": 1,
+    "high": 16,
+    "medium": 1,
+    "low": 3,
+    "total": 21,
+    "automated": 21,
+    "manual": 0,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 3
+  }
+}

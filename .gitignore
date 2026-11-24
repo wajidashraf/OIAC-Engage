@@ -1,0 +1,57 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+
+# Vite
+.vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env*.local
+src/config/flowUrl.js
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage
+artifacts/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.playwright-mcp/
+
+# Private flow snapshots, browser evidence, and staged deployment output
+.superpowers/activity-post-attachments/
+.superpowers/activity-post-ui/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local session artifacts and deployment cache
+.superpowers/
+.powerpages-site/.portalconfig/
+
+# Generated deployment bundle contains environment-specific signed URLs
+.powerpages-site/web-files/index-*.js/

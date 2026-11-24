@@ -1,0 +1,209 @@
+{
+  "stageName": "Production",
+  "releaseDate": "2026-11-13",
+  "verifiedAt": "2026-11-13T21:48:09.774Z",
+  "environmentId": "ca557a8d-626a-ed50-b1e7-ca05693b4405",
+  "organizationId": "c6d2b382-dcef-f011-aa23-6045bd003930",
+  "websiteId": "e7f400bd-1e04-4efa-b8b3-7a7a3b168662",
+  "url": "https://oiac.powerappsportals.com",
+  "status": "deployed-and-hosted-verified",
+  "assets": {
+    "index-C-9auer1.css": "d8e2078dc472610b6cb2ee6bc17c829715cd608036d5b5001e606b7dbe2e56aa",
+    "index-CK_CLIz0.js": "e6a281afd2c819a990403d157056fb2c5e17915b116caaea95a499ad7f2dc225"
+  },
+  "changedMetadata": [
+    "site-settings/Webapi-contact-fields.sitesetting.yml",
+    "server-logic/appointments/appointments.js"
+  ],
+  "addedMetadata": [
+    "cloud-flow-consumer/Upload-Activity-Channel-Post-Document.cloudflowconsumer.yml",
+    "site-settings/Webapi-mss_contactdistrictmembership-enabled.sitesetting.yml",
+    "site-settings/Webapi-mss_contactdistrictmembership-fields.sitesetting.yml",
+    "table-permissions/Authenticated-Contact-District-Membership-Read.tablepermission.yml",
+    "server-logic/contact-directory/contact-directory.js",
+    "server-logic/contact-directory/contact-directory.serverlogic.yml"
+  ],
+  "migration": {
+    "sourceHash": "4842193ba1a9e9df56ecfd2e3696ef1ffcbed0febcb53b61f4a2e04f729041bd",
+    "originalContacts": 3829,
+    "currentContacts": 3829,
+    "requiredLegacyPairs": 3706,
+    "createdThisRun": 3706,
+    "totalMemberships": 3706,
+    "duplicates": 0,
+    "missingActiveLegacyPairs": 0,
+    "originalContactIdsPrimaryDistrictsAndStatesPreserved": true,
+    "onlyProductionContactIdsUsed": true,
+    "uatContactDataCopied": false,
+    "productionRoleAssignmentsChanged": false
+  },
+  "flow": {
+    "patch": "CRMSolution_Patch_de4f57f3",
+    "version": "1.0.1.0",
+    "managed": true,
+    "artifactSha256": "c5e7bc077568f2492026b85e1f0fe560bcbe29c32d6633fae6c483829609419d",
+    "soleChangedWorkflow": "3d2d6112-bcd2-f111-a059-000d3a35b61f",
+    "productionRuntimeSite": "47d1afab-57fc-4db7-bb83-c372e9df2c60",
+    "active": true,
+    "dataverseConnectionReboundToAccessibleProductionConnection": "shared-commondataser-52397880-d518-41f2-8dd2-3856dfeb0c19",
+    "sharePointConnectionPreserved": true,
+    "overwriteUnmanagedCustomizations": false,
+    "unrelatedComponentsImported": false
+  },
+  "backendPreservation": {
+    "checkedAt": "2026-11-13T20:55:22.375Z",
+    "assemblies": [
+      {
+        "name": "Oiac.Engage.CoverageFiles",
+        "sha256": "c0517bf07ca6f1a75ae18ee1c19b975183306af2cebd24ac6c65607046a22efa",
+        "preserved": true
+      },
+      {
+        "name": "Oiac.Engage.ContactDirectory",
+        "sha256": "2d1e04432cf531e1be6de1e8f09d3a9e1bd8575adee9c26225c73cb3614a1981",
+        "preserved": true
+      },
+      {
+        "name": "Oiac.Engage.SiteActivityLog",
+        "sha256": "8fde73665f4421b791b9c3dfb6830718f39951880532e578f6d2fe920e6f5405",
+        "preserved": true
+      },
+      {
+        "name": "Oiac.Engage.Appointments",
+        "sha256": "cc637de7fcb595e47f7f275fbb9e797d88c88a58357d3ef1982b00f4f0d66eaa",
+        "preserved": true
+      },
+      {
+        "name": "Oiac.Engage.CoverageTime",
+        "sha256": "c07ba0c087482fdbed26d86305a1d2de276363812f39a89aeb3b28ec49cc2ac2",
+        "preserved": true
+      },
+      {
+        "name": "Oiac.Engage.ActivityChannel",
+        "sha256": "454e5c1c33167679931009bee5120b484837b8a4adfd958b18d66f43db4820f3",
+        "preserved": true
+      }
+    ],
+    "historyStepsPreserved": 34,
+    "contactFormPreserved": true,
+    "webRoleDefinitionsPreserved": 5,
+    "connectionReferencesChecked": 63,
+    "onlyIntendedConnectionReferenceChanged": true,
+    "unrelatedFlowDefinitionsAndStatesPreserved": 3
+  },
+  "browser": {
+    "checkedAt": "2026-11-13T21:44:42.878Z",
+    "authenticated": true,
+    "roles": [
+      "Administrators",
+      "Volunteer",
+      "Authenticated Users"
+    ],
+    "contactFirstPage": 15,
+    "contactSecondPage": 15,
+    "contactSearch": true,
+    "apis": {
+      "activityRead": true,
+      "adminModerationAndDelete": true,
+      "appointmentRead": true,
+      "appointmentContactSearch": true,
+      "appointmentContactPagination": true,
+      "historyRead": true,
+      "attachmentList": true,
+      "attachmentCount": 0,
+      "attachmentView": false
+    },
+    "pages": [
+      {
+        "path": "/",
+        "status": 200,
+        "heading": "Administrator",
+        "alerts": []
+      },
+      {
+        "path": "/report",
+        "status": 200,
+        "heading": "Meeting Reports",
+        "alerts": []
+      },
+      {
+        "path": "/my-calendar",
+        "status": 200,
+        "heading": "My Calendar",
+        "alerts": []
+      },
+      {
+        "path": "/activity/events",
+        "status": 200,
+        "heading": "Events",
+        "alerts": []
+      },
+      {
+        "path": "/activity/appointments",
+        "status": 200,
+        "heading": "Appointments",
+        "alerts": []
+      },
+      {
+        "path": "/press-coverage",
+        "status": 200,
+        "heading": "Press Coverage",
+        "alerts": []
+      },
+      {
+        "path": "/activity/channel",
+        "status": 200,
+        "heading": "Activity Channel",
+        "alerts": []
+      }
+    ],
+    "assets": [
+      "index-CK_CLIz0.js",
+      "index-C-9auer1.css"
+    ],
+    "runtimeErrors": [],
+    "apiFailures": [],
+    "blockedWrites": [],
+    "businessRecordsWritten": 0,
+    "productionRolesChanged": false
+  },
+  "validation": {
+    "reviewedUatFrontendTests": 1222,
+    "reviewedUatSdkTests": 35,
+    "reviewedUatRoleDistrictCases": 13,
+    "productionReadOnly": true,
+    "productionRolesChanged": false,
+    "productionWriteJourneysTested": false
+  },
+  "knownLimitations": [
+    "Production smoke uses the signed-in administrator account; other role and multiple-district combinations were tested in Test/UAT.",
+    "No production test posts, uploads, reports or appointments were created.",
+    "Previously reviewed Applicant navigation label and membership-cache propagation findings remain unchanged.",
+    "Attachment list was verified on an existing post with no attachments; no production upload or file-content download was tested."
+  ],
+  "directoryRuntime": {
+    "checkedAt": "2026-11-13T21:47:06.922Z",
+    "districtScopedEndpoint": true,
+    "membershipApi": true,
+    "ownActiveMemberships": 0,
+    "expectedSharedDistrictContacts": 0,
+    "actualSharedDistrictContacts": 0,
+    "nativePaginationTested": false,
+    "administratorAllContactsVerifiedSeparately": true,
+    "writes": 0
+  },
+  "verificationLocalDate": "2026-11-14",
+  "verificationTimeZone": "Asia/Riyadh",
+  "cleanup": {
+    "productionTestRecordsCreated": 0,
+    "productionTestFilesCreated": 0,
+    "deletionsRequired": 0,
+    "deletionsPerformed": 0,
+    "legitimateDistrictMembershipMigrationPreserved": true
+  },
+  "testHarnessNotes": [
+    "Administrator Contact search uses first/last-name fields; the read-only harness was corrected to use a partial name.",
+    "Appointment Contact first-page requests omit page=1, matching the existing frontend contract.",
+    "The flow probe uses the frontend X-Requested-With header; subsequent exact-contract reads and the full smoke completed successfully."
+  ]
+}

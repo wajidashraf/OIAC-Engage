@@ -1,0 +1,298 @@
+import { act, renderHook, waitFor } from '@testing-library/react'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
+import {
+  getAdminContacts,
+  getDistrictContacts,
+  getLoggedInUserDistricts,
+} from './contactService'
+import type { ContactPage } from './contactTypes'
+import { useDistrictContacts } from './useDistrictContacts'
+
+vi.mock('./contactService', () => ({
+  getLoggedInUserDistricts: vi.fn(),
+  getDistrictContacts: vi.fn(),
+  getAdminContacts: vi.fn(),
+}))
+
+const getLoggedInUserDistrictsMock = vi.mocked(getLoggedInUserDistricts)
+const getDistrictContactsMock = vi.mocked(getDistrictContacts)
+const getAdminContactsMock = vi.mocked(getAdminContacts)
+const CONTACT_ID = '20f9c936-6740-451e-9470-28a3c83c9909'
+const DISTRICT_ID = '367d7420-d8a2-f111-b8da-7ced8d70f293'
+
+const firstPage: ContactPage = {
+  contacts: [{
+    id: '10000000-0000-0000-0000-000000000001',
+    fullName: 'Sara Rahimi',
+    firstName: 'Sara',
+    lastName: 'Rahimi',
+    email: 'sara@example.org',
+    jobTitle: 'Volunteer Coordinator',
+    mobilePhone: '202-555-0100',
+    city: 'Washington',
+    stateOrProvince: 'DC',
+    postalCode: '20001',
+    districtName: 'District 1',
+    districtId: DISTRICT_ID,
+  }],
+  hasNext: true,
+  nextLink: '/_api/contacts?%24skiptoken=opaque-page-2',
+}
+
+function deferred<T>() {
+  let resolve!: (value: T) => void
+  let reject!: (reason?: unknown) => void
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise
+    reject = rejectPromise
+  })
+  return { promise, resolve, reject }
+}
+
+describe('useDistrictContacts', () => {
+  beforeEach(() => {
+    vi.useRealTimers()
+    getLoggedInUserDistrictsMock.mockReset()
+    getDistrictContactsMock.mockReset()
+    getAdminContactsMock.mockReset()
+    getLoggedInUserDistrictsMock.mockResolvedValue([DISTRICT_ID])
+    getDistrictContactsMock.mockResolvedValue(firstPage)
+    getAdminContactsMock.mockResolvedValue(firstPage)
+  })
+
+  test('does not request contacts until the signed-in user district is known', async () => {
+    const district = deferred<readonly string[]>()
+    getLoggedInUserDistrictsMock.mockReturnValue(district.promise)
+    const { result } = renderHook(() => useDistrictContacts(CONTACT_ID))
+
+    expect(result.current.status).toBe('loading-district')
+    expect(getDistrictContactsMock).not.toHaveBeenCalled()
+
+    await act(async () => district.resolve([DISTRICT_ID]))
+
+    await waitFor(() => expect(result.current.status).toBe('ready'))
+    expect(getDistrictContactsMock).toHaveBeenCalledWith(
+      { search: '', nextLink: null },
+      expect.any(AbortSignal),
+    )
+  })
+
+  test('handles a missing session Contact and a Contact without a district', async () => {
+    const missingSession = renderHook(() => useDistrictContacts(undefined))
+    expect(missingSession.result.current.status).toBe('missing-session')
+    expect(getLoggedInUserDistrictsMock).not.toHaveBeenCalled()
+    missingSession.unmount()
+
+    getLoggedInUserDistrictsMock.mockResolvedValue([])
+    const missingDistrict = renderHook(() => useDistrictContacts(CONTACT_ID))
+    await waitFor(() => expect(missingDistrict.result.current.status).toBe('missing-district'))
+    expect(getDistrictContactsMock).not.toHaveBeenCalled()
+  })
+
+  test('uses one server-paged Contact query after checking all assigned districts', async () => {
+    const secondDistrict = '22222222-2222-4222-8222-222222222222'
+    getLoggedInUserDistrictsMock.mockResolvedValue([DISTRICT_ID, secondDistrict])
+    const { result } = renderHook(() => useDistrictContacts(CONTACT_ID))
+    await waitFor(() => expect(result.current.status).toBe('ready'))
+    expect(getDistrictContactsMock).toHaveBeenCalledWith(
+      { search: '', nextLink: null },
+      expect.any(AbortSignal),
+    )
+    expect(getAdminContactsMock).not.toHaveBeenCalled()
+  })
+
+  test('debounces search, sends only the latest value, and resets pagination to page one', async () => {
+    vi.useFakeTimers()
+    const { result } = renderHook(() => useDistrictContacts(CONTACT_ID))
+    await act(async () => Promise.resolve())
+    await act(async () => Promise.resolve())
+
+    act(() => result.current.nextPage())
+    await act(async () => Promise.resolve())
+    expect(result.current.page).toBe(2)
+
+    act(() => {
+      result.current.setSearch('Sar')
+      result.current.setSearch('Sara')
+    })
+    await act(async () => vi.advanceTimersByTimeAsync(349))
+    expect(getDistrictContactsMock).not.toHaveBeenCalledWith(
+      expect.objectContaining({ search: 'Sara' }),
+      expect.anything(),
+    )
+
+    await act(async () => vi.advanceTimersByTimeAsync(1))
+    await act(async () => Promise.resolve())
+
+    expect(result.current.page).toBe(1)
+    expect(getDistrictContactsMock).toHaveBeenLastCalledWith(
+      { search: 'Sara', nextLink: null },
+      expect.any(AbortSignal),
+    )
+  })
+
+  test('uses server continuation cursors and never navigates below page one', async () => {
+    const { result } = renderHook(() => useDistrictContacts(CONTACT_ID))
+    await waitFor(() => expect(result.current.status).toBe('ready'))
+
+    act(() => result.current.previousPage())
+    expect(result.current.page).toBe(1)
+
+    act(() => result.current.nextPage())
+    await waitFor(() => expect(result.current.page).toBe(2))
+    expect(getDistrictContactsMock).toHaveBeenLastCalledWith(
+      { search: '', nextLink: firstPage.nextLink },
+      expect.any(AbortSignal),
+    )
+
+    act(() => result.current.previousPage())
+    await waitFor(() => expect(result.current.page).toBe(1))
+  })
+
+  test('does not reset fast page navigation when the initial empty-search debounce expires', async () => {
+    vi.useFakeTimers()
+    const { result } = renderHook(() => useDistrictContacts(CONTACT_ID))
+    await act(async () => Promise.resolve())
+    await act(async () => Promise.resolve())
+    act(() => result.current.nextPage())
+    await act(async () => Promise.resolve())
+    act(() => result.current.nextPage())
+    await act(async () => Promise.resolve())
+    expect(result.current.page).toBe(3)
+    await act(async () => vi.advanceTimersByTimeAsync(350))
+    expect(result.current.page).toBe(3)
+  })
+
+  test('aborts a superseded request and ignores its late response', async () => {
+    const pageOne = deferred<typeof firstPage>()
+    const pageTwo = deferred<typeof firstPage>()
+    getDistrictContactsMock
+      .mockReturnValueOnce(pageOne.promise)
+      .mockReturnValueOnce(pageTwo.promise)
+    const { result } = renderHook(() => useDistrictContacts(CONTACT_ID))
+
+    await waitFor(() => expect(getDistrictContactsMock).toHaveBeenCalledTimes(1))
+    const firstSignal = getDistrictContactsMock.mock.calls[0][1]
+    act(() => result.current.retry())
+    await waitFor(() => expect(getDistrictContactsMock).toHaveBeenCalledTimes(2))
+    expect(firstSignal?.aborted).toBe(true)
+
+    await act(async () => pageTwo.resolve({
+      contacts: [{ ...firstPage.contacts[0], fullName: 'Newest result' }],
+      hasNext: false,
+      nextLink: null,
+    }))
+    await waitFor(() => expect(result.current.contacts[0]?.fullName).toBe('Newest result'))
+
+    await act(async () => pageOne.resolve(firstPage))
+    expect(result.current.contacts[0]?.fullName).toBe('Newest result')
+  })
+
+  test('does not show aborted requests as errors and retries failed requests once requested', async () => {
+    const aborted = new DOMException('Aborted', 'AbortError')
+    getDistrictContactsMock
+      .mockRejectedValueOnce(aborted)
+      .mockRejectedValueOnce(new Error('Dataverse detail'))
+      .mockResolvedValueOnce(firstPage)
+    const { result } = renderHook(() => useDistrictContacts(CONTACT_ID))
+
+    await waitFor(() => expect(getDistrictContactsMock).toHaveBeenCalledTimes(1))
+    expect(result.current.status).not.toBe('error')
+
+    act(() => result.current.retry())
+    await waitFor(() => expect(result.current.status).toBe('error'))
+    expect(result.current.errorMessage).toBe('Contacts could not be loaded. Try again.')
+
+    act(() => result.current.retry())
+    await waitFor(() => expect(result.current.status).toBe('ready'))
+    expect(getDistrictContactsMock).toHaveBeenCalledTimes(3)
+  })
+
+  test('loads all Contacts directly in administrator mode and aborts on unmount', async () => {
+    const adminPage = deferred<ContactPage>()
+    getAdminContactsMock.mockReturnValue(adminPage.promise)
+    const { result, unmount } = renderHook(() => (
+      useDistrictContacts(CONTACT_ID, { isAdmin: true })
+    ))
+
+    expect(result.current.status).toBe('loading-contacts')
+    expect(getLoggedInUserDistrictsMock).not.toHaveBeenCalled()
+    expect(getDistrictContactsMock).not.toHaveBeenCalled()
+    expect(getAdminContactsMock).toHaveBeenCalledWith(
+      { search: '', nextLink: null },
+      expect.any(AbortSignal),
+    )
+    const signal = getAdminContactsMock.mock.calls[0]?.[1]
+
+    unmount()
+    expect(signal?.aborted).toBe(true)
+  })
+
+  test('keeps administrator search and cursor pagination on the administrator service', async () => {
+    vi.useFakeTimers()
+    const { result } = renderHook(() => useDistrictContacts(CONTACT_ID, { isAdmin: true }))
+    await act(async () => Promise.resolve())
+
+    act(() => result.current.nextPage())
+    await act(async () => Promise.resolve())
+    expect(getAdminContactsMock).toHaveBeenLastCalledWith(
+      { search: '', nextLink: firstPage.nextLink },
+      expect.any(AbortSignal),
+    )
+
+    act(() => result.current.setSearch(' Sara '))
+    await act(async () => vi.advanceTimersByTimeAsync(350))
+    await act(async () => Promise.resolve())
+
+    expect(result.current.page).toBe(1)
+    expect(getAdminContactsMock).toHaveBeenLastCalledWith(
+      { search: 'Sara', nextLink: null },
+      expect.any(AbortSignal),
+    )
+    expect(getLoggedInUserDistrictsMock).not.toHaveBeenCalled()
+    expect(getDistrictContactsMock).not.toHaveBeenCalled()
+  })
+
+  test('retries and reloads only the administrator collection', async () => {
+    getAdminContactsMock
+      .mockRejectedValueOnce(new Error('Dataverse detail'))
+      .mockResolvedValue(firstPage)
+    const { result } = renderHook(() => useDistrictContacts(undefined, { isAdmin: true }))
+
+    await waitFor(() => expect(result.current.status).toBe('error'))
+    expect(result.current.errorMessage).toBe('Contacts could not be loaded. Try again.')
+
+    act(() => result.current.retry())
+    await waitFor(() => expect(result.current.status).toBe('ready'))
+    expect(getAdminContactsMock).toHaveBeenCalledTimes(2)
+
+    act(() => result.current.reload())
+    await waitFor(() => expect(getAdminContactsMock).toHaveBeenCalledTimes(3))
+    expect(getLoggedInUserDistrictsMock).not.toHaveBeenCalled()
+  })
+
+  test('ignores a late administrator result after reload starts a newer request', async () => {
+    const first = deferred<ContactPage>()
+    const second = deferred<ContactPage>()
+    getAdminContactsMock
+      .mockReturnValueOnce(first.promise)
+      .mockReturnValueOnce(second.promise)
+    const { result } = renderHook(() => useDistrictContacts(CONTACT_ID, { isAdmin: true }))
+
+    await waitFor(() => expect(getAdminContactsMock).toHaveBeenCalledTimes(1))
+    const firstSignal = getAdminContactsMock.mock.calls[0]?.[1]
+    act(() => result.current.reload())
+    await waitFor(() => expect(getAdminContactsMock).toHaveBeenCalledTimes(2))
+    expect(firstSignal?.aborted).toBe(true)
+
+    await act(async () => second.resolve({
+      contacts: [{ ...firstPage.contacts[0], fullName: 'Newest result' }],
+      hasNext: false,
+      nextLink: null,
+    }))
+    await waitFor(() => expect(result.current.contacts[0]?.fullName).toBe('Newest result'))
+
+    await act(async () => first.resolve(firstPage))
+    expect(result.current.contacts[0]?.fullName).toBe('Newest result')
+  })
+})
